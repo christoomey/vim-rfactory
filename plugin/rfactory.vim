@@ -1,10 +1,17 @@
 function! s:FactoryOnCurrentLine()
   let fg_methods = ['create', 'build', 'build_stubbed', 'attributes_for']
-  let pattern = '\<\%('. join(fg_methods, '\|') . '\).\(:\w\+\)\%(, \(:\w\+\)\)\?'
-  let factory_details = matchlist(getline('.'), pattern)
-  if len(factory_details)
-    let factory_name = factory_details[1]
-    let factory_trait = factory_details[2]
+  let method_pattern = '\<\%('. join(fg_methods, '\|') . '\)' " Non capturing 'or'
+  let symbol_pattern = '\(:\w\+\)'
+  let optional_trait_pattern = '\%(, '.symbol_pattern.'\)\?'
+  let pattern = method_pattern . '.' . symbol_pattern . optional_trait_pattern
+  return matchlist(getline('.'), pattern)
+endfunction
+
+function! s:Rfactory()
+  let factory = s:FactoryOnCurrentLine()
+  if len(factory)
+    let factory_name = factory[1]
+    let factory_trait = factory[2]
     split spec/support/factories.rb
     call search('.*factory.' . factory_name)
     if factory_trait !=? ''
@@ -16,6 +23,6 @@ function! s:FactoryOnCurrentLine()
   endif
 endfunction
 
-command! Rfactory :call <sid>FactoryOnCurrentLine()
+command! Rfactory :call <sid>Rfactory()
 
 nnoremap go :Rfactory<CR>
