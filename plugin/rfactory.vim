@@ -21,7 +21,11 @@ function! s:Rfactory()
   if len(factory)
     let factory_name = factory[1]
     let factory_trait = factory[2]
-    split g:rfactory_factory_location
+    if exists("b:rails_root")
+      split rails#buffer().app().root . '/' . g:rfactory_factory_location
+    else
+      split g:rfactory_factory_location
+    endif
     call search('.*factory.' . factory_name)
     if factory_trait !=? ''
       call search('.*trait.' . factory_trait)
