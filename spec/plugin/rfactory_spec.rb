@@ -4,7 +4,7 @@ describe 'Rfactory' do
   %w{create build build_stubbed attributes_for}.each do |method|
     it "maps FG method '#{method}' to its factory" do
       spec_file = create_spec_file("user = #{method}(:user)")
-      create_factories_file(vim.command('pwd'))
+      create_factories_file
 
       vim.edit spec_file
       vim.command 'Rfactory'
@@ -18,7 +18,7 @@ describe 'Rfactory' do
 
   it 'navigates to traits if present' do
     spec_file = create_spec_file('user = create(:user, :with_token)')
-    create_factories_file(vim.command('pwd'))
+    create_factories_file
 
     vim.edit spec_file
     vim.command 'Rfactory'
@@ -31,7 +31,7 @@ describe 'Rfactory' do
 
   it 'does nothing if not on a factory call line' do
     spec_file = create_spec_file('no factory call on this line')
-    create_factories_file(vim.command('pwd'))
+    create_factories_file
 
     vim.edit spec_file
     vim.command 'Rfactory'
@@ -39,7 +39,29 @@ describe 'Rfactory' do
     expect(current_path).to eq spec_file
   end
 
+  it 'uses the factory location overrid if present' do
+    spec_file = create_spec_file('user = create(:user)')
+    create_factories_file('spec/support')
+
+    with_factory_file_location("spec/support/factories.rb") do
+      vim.edit spec_file
+      vim.command 'Rfactory'
+      line = vim.command "echo getline('.')"
+
+      expect(current_path).to eq 'spec/support/factories.rb'
+      expect(line).to eq 'factory :user do'
+    end
+  end
+
   private
+
+  def with_factory_file_location(location)
+    default_location = vim.command 'echo g:rfactory_factory_location'
+    vim.command "let g:rfactory_factory_location = '#{location}'"
+    yield
+  ensure
+    vim.command "let g:rfactory_factory_location = '#{default_location}'"
+  end
 
   def current_path
     vim.command "echo expand('%')"
@@ -51,9 +73,9 @@ describe 'Rfactory' do
     spec_file
   end
 
-  def create_factories_file(path)
-    FileUtils.mkdir_p "spec/support"
-    factories_path = "spec/factories.rb"
+  def create_factories_file(path='spec')
+    FileUtils.mkdir_p path
+    factories_path = "#{path}/factories.rb"
     factories_text = normalize_string_indent <<-EOS
       FactoryGirl.define do
         factory :user do
