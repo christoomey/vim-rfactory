@@ -11,7 +11,7 @@ describe 'Rfactory' do
 
       line = vim.command "echo getline('.')"
 
-      expect(current_path).to eq 'spec/support/factories.rb'
+      expect(current_path).to eq 'spec/factories.rb'
       expect(line).to eq 'factory :user do'
     end
   end
@@ -25,7 +25,7 @@ describe 'Rfactory' do
 
     line = vim.command "echo getline('.')"
 
-    expect(current_path).to eq 'spec/support/factories.rb'
+    expect(current_path).to eq 'spec/factories.rb'
     expect(line).to eq 'trait :with_token do'
   end
 
@@ -53,7 +53,7 @@ describe 'Rfactory' do
 
   def create_factories_file(path)
     FileUtils.mkdir_p "spec/support"
-    factories_path = "spec/support/factories.rb"
+    factories_path = "spec/factories.rb"
     factories_text = normalize_string_indent <<-EOS
       FactoryGirl.define do
         factory :user do
