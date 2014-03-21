@@ -1,3 +1,7 @@
+if !exists("g:rfactory_factory_location")
+  let g:rfactory_factory_location = "spec/factories.rb"
+endif
+
 function! s:FactoryOnCurrentLine()
   let fg_methods = ['create', 'build', 'build_stubbed', 'attributes_for']
   let method_pattern = '\<\%('. join(fg_methods, '\|') . '\)' " Non capturing 'or'
@@ -12,7 +16,7 @@ function! s:Rfactory()
   if len(factory)
     let factory_name = factory[1]
     let factory_trait = factory[2]
-    split spec/support/factories.rb
+    split g:rfactory_factory_location
     call search('.*factory.' . factory_name)
     if factory_trait !=? ''
       call search('.*trait.' . factory_trait)
