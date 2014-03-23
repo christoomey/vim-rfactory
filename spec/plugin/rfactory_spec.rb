@@ -9,10 +9,8 @@ describe 'Rfactory' do
       vim.edit spec_file
       vim.command 'Rfactory'
 
-      line = vim.command "echo getline('.')"
-
       expect(current_path).to eq 'spec/factories.rb'
-      expect(line).to eq 'factory :user do'
+      expect(current_line).to eq 'factory :user do'
     end
   end
 
@@ -23,10 +21,8 @@ describe 'Rfactory' do
     vim.edit spec_file
     vim.command 'Rfactory'
 
-    line = vim.command "echo getline('.')"
-
     expect(current_path).to eq 'spec/factories.rb'
-    expect(line).to eq 'trait :with_token do'
+    expect(current_line).to eq 'trait :with_token do'
   end
 
   it 'does nothing if not on a factory call line' do
@@ -46,11 +42,25 @@ describe 'Rfactory' do
     with_factory_file_location("spec/support/factories.rb") do
       vim.edit spec_file
       vim.command 'Rfactory'
-      line = vim.command "echo getline('.')"
 
       expect(current_path).to eq 'spec/support/factories.rb'
-      expect(line).to eq 'factory :user do'
+      expect(current_line).to eq 'factory :user do'
     end
+  end
+
+  it 'navigates via the deisred edit mehtod per command' do
+    spec_file = create_spec_file('user = create :user')
+    create_factories_file
+
+    vim.edit spec_file
+    vim.command 'RTfactory'
+
+    expect(current_path).to eq 'spec/factories.rb'
+    expect(current_tab_number).to eq '2'
+
+    vim.command 'tabclose'
+    expect(current_path).to eq 'user_spec.rb'
+    expect(current_tab_number).to eq '1'
   end
 
   private
@@ -63,8 +73,16 @@ describe 'Rfactory' do
     vim.command "let g:rfactory_factory_location = '#{default_location}'"
   end
 
+  def current_line
+    line = vim.command "echo getline('.')"
+  end
+
   def current_path
     vim.command "echo expand('%')"
+  end
+
+  def current_tab_number
+    vim.command 'echo tabpagenr()'
   end
 
   def create_spec_file(text)
