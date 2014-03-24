@@ -12,12 +12,12 @@ function! s:FactoryOnCurrentLine()
   return matchlist(getline('.'), s:pattern)
 endfunction
 
-function! s:Rfactory()
+function! s:Rfactory(edit_method)
   let factory = s:FactoryOnCurrentLine()
   if len(factory)
     let factory_name = factory[1]
     let factory_trait = factory[2]
-    execute 'split ' . g:rfactory_factory_location
+    execute a:edit_method . ' ' . g:rfactory_factory_location
     call search('.*factory.' . factory_name)
     if factory_trait !=? ''
       call search('.*trait.' . factory_trait)
@@ -28,6 +28,8 @@ function! s:Rfactory()
   endif
 endfunction
 
-command! Rfactory :call <sid>Rfactory()
-
-nnoremap go :Rfactory<CR>
+command! Rfactory :call <sid>Rfactory('edit')
+command! REfactory :call <sid>Rfactory('edit')
+command! RSfactory :call <sid>Rfactory('split')
+command! RVfactory :call <sid>Rfactory('vsplit')
+command! RTfactory :call <sid>Rfactory('tabedit')
