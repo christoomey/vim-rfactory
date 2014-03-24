@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'vimrunner'
-gem 'rspec'
+gem 'pry'
 gem 'rake'
+gem 'rspec'
+gem 'vimrunner'

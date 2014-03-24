@@ -38,16 +38,12 @@ describe 'Rfactory' do
       expect(current_path).to eq 'spec/factories.rb'
     end
 
-    it 'uses the factory location override if present' do
-      create_factories_file 'spec/support'
-      edit_spec_file_with_text
+    it 'does nothing if no factories.rb file is present in spec/ dir' do
+      spec_file = create_spec_file('user = create(:user)')
 
-      with_factory_file_location("spec/support/factories.rb") do
-        vim.command 'Rfactory'
+      vim.edit spec_file
 
-        expect(current_path).to eq 'spec/support/factories.rb'
-        expect(current_line).to eq 'factory :user do'
-      end
+      expect { vim.command 'Rfactory' }.not_to change { current_path }
     end
   end
 
@@ -110,9 +106,36 @@ describe 'Rfactory' do
     end
   end
 
+  describe "finding the factory" do
+    it "finds factories in spec/factories/*.rb" do
+      nested_factory_file_path = create_factory_file_in_dir "spec/factories"
+      edit_spec_file_with_text
+
+      vim.command "Rfactory"
+
+      expect(current_path).to eq(nested_factory_file_path)
+    end
+
+    it "finds factories in test/factories/*.rb" do
+      nested_factory_file_path = create_factory_file_in_dir "test/factories"
+      edit_spec_file_with_text
+
+      vim.command "Rfactory"
+
+      expect(current_path).to eq(nested_factory_file_path)
+    end
+  end
+
   private
 
-  def edit_spec_file_with_text(text =' user = create :user')
+  def create_factory_file_in_dir(dir)
+    nested_factory_file_path = "#{dir}/user.rb"
+    create_factories_file path: "#{dir}/trails.rb", factories_text: ""
+    create_factories_file path: nested_factory_file_path
+    nested_factory_file_path
+  end
+
+  def edit_spec_file_with_text(text = 'user = create :user')
     spec_file = create_spec_file(text)
     vim.edit spec_file
   end
@@ -120,14 +143,6 @@ describe 'Rfactory' do
   def switch_window(direction)
     directions  = { 'left' => 'h', 'down' => 'j', 'up' => 'k', 'right' => 'l' }
     vim.command "wincmd #{directions[direction]}"
-  end
-
-  def with_factory_file_location(location)
-    default_location = vim.command 'echo g:rfactory_factory_location'
-    vim.command "let g:rfactory_factory_location = '#{location}'"
-    yield
-  ensure
-    vim.command "let g:rfactory_factory_location = '#{default_location}'"
   end
 
   def current_line
@@ -156,10 +171,9 @@ describe 'Rfactory' do
     spec_file
   end
 
-  def create_factories_file(path='spec')
-    FileUtils.mkdir_p path
-    factories_path = "#{path}/factories.rb"
-    factories_text = normalize_string_indent <<-EOS
+  def create_factories_file(path: "spec/factories.rb", factories_text: nil)
+    FileUtils.mkdir_p File.dirname(path)
+    factories_text ||= normalize_string_indent <<-EOS
       FactoryGirl.define do
         factory :user do
           name 'Bob smith'
@@ -170,6 +184,12 @@ describe 'Rfactory' do
         end
       end
     EOS
-    write_file factories_path, factories_text
+    write_file path, factories_text
+  end
+
+  def debug!
+    puts "\n\n"
+    puts vim.command "echo g:rfactory_debug"
+    vim.command "let g:rfactory_debug = []"
   end
 end
