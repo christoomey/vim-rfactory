@@ -24,7 +24,7 @@ function! s:Rfactory(edit_method)
     endif
     normal! zz
   else
-    " s:ShowErrorMessage('No factory call found on current line.')
+    execute a:edit_method . ' ' . g:rfactory_factory_location
   endif
 endfunction
 
