@@ -29,13 +29,13 @@ describe 'Rfactory' do
       expect(current_line).to eq 'trait :with_token do'
     end
 
-    it 'does nothing if not on a factory call line' do
+    it 'opens the factories file if no factory call on line' do
       create_factories_file
       edit_spec_file_with_text 'no factory call on this line'
 
       vim.command 'Rfactory'
 
-      expect(current_path).to eq 'user_spec.rb'
+      expect(current_path).to eq 'spec/factories.rb'
     end
 
     it 'uses the factory location override if present' do
