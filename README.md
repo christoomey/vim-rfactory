@@ -4,7 +4,11 @@ RFactory
 Rfactory is a vim plugin for rapid navigation to [Factory Girl] factory
 definitions within Vim.
 
-[Factory Girl]: https://github.com/thoughtbot/factory\_girl
+![rfactory navigation demo][]
+
+[Factory Girl]: https://github.com/thoughtbot/factory_girl
+[Rails.vim]: https://github.com/tpope/vim-rails
+[rfactory navigation demo]: ./images/rfactory-navigation-demo.gif
 
 Usage
 -----
