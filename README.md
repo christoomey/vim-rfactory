@@ -1,5 +1,5 @@
-RFactory
-========
+Rfactory [![Build Status](https://travis-ci.org/christoomey/vim-rfactory.svg?branch=master)](https://travis-ci.org/christoomey/vim-rfactory)
+============================================================================================================================================
 
 Rfactory is a vim plugin for rapid navigation to [Factory Girl] factory
 definitions within Vim.
