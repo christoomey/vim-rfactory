@@ -1,8 +1,21 @@
-let rfactory_fg_methods = ['create', 'build', 'build_stubbed', 'attributes_for']
-let method_pattern = '\<\%('. join(rfactory_fg_methods, '\|') . '\)' " Non capturing 'or'
-let symbol_pattern = '\(:\w\+\)'
-let optional_trait_pattern = '\%(, '.symbol_pattern.'\)\?'
-let s:pattern = method_pattern . '.' . symbol_pattern . optional_trait_pattern
+let s:rfactory_fg_methods = ['create', 'build', 'build_stubbed', 'attributes_for']
+let s:word_boundary = '\<'
+let s:non_capturing_group = '\%('
+let s:symbol_pattern = '\(:\w\+\)'
+let s:list_count_pattern = ', \d\+'
+let s:factory_name_pattern = s:symbol_pattern
+let s:method_pattern = s:non_capturing_group .
+      \ join(s:rfactory_fg_methods, '\|') . '\)'
+let s:optional_pair_variant = s:non_capturing_group . '_pair\)\?'
+let s:optional_trait_pattern = s:non_capturing_group . ', ' .
+      \ s:symbol_pattern . '\)\?'
+
+let s:factory_method_pattern = s:word_boundary . s:method_pattern .
+      \ s:optional_pair_variant . '.' . s:factory_name_pattern .
+      \ s:optional_trait_pattern
+let s:factory_list_method_pattern = s:word_boundary . s:method_pattern . '_list' .
+      \ '.' . s:factory_name_pattern . s:list_count_pattern . s:optional_trait_pattern
+
 let g:rfactory_debug = []
 let s:FALSE = 0
 let s:TRUE = 1
@@ -14,7 +27,16 @@ let s:factory_path_patterns = [
       \ ]
 
 function! s:FactoryOnCurrentLine()
-  return matchlist(getline("."), s:pattern)
+  let list_match = s:MatchlistOnCurrentLine(s:factory_list_method_pattern)
+  if empty(list_match)
+    return s:MatchlistOnCurrentLine(s:factory_method_pattern)
+  else
+    return list_match
+  end
+endfunction
+
+function! s:MatchlistOnCurrentLine(pattern)
+  return matchlist(getline("."), a:pattern)
 endfunction
 
 function! s:Debug(msg)

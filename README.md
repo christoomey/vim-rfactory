@@ -15,7 +15,9 @@ Usage
 
 With your cursor anywhere on a line containing a FactoryGirl reference, e.g.
 `create(:user)`, run `:Rfactory` to navigate to the `:user` factory
-definition. If the current line contains a [FactoryGirl trait][] reference,
+definition.
+
+If the current line contains a [FactoryGirl trait][] reference,
 you will be taken to the line that defines the trait within the parent
 factory.
 
@@ -47,3 +49,18 @@ spec/factories/*.rb
 ```
 
 [Defining Factories section]: https://github.com/thoughtbot/factory_girl/blob/master/GETTING_STARTED.md#defining-factories
+
+Support
+-------
+
+The plugin does its best to support each of the FactoryGirl methods,
+specifically:
+
+- `create`
+- `build`
+- `build_stubbed`
+- `attributes_for`
+
+In addition, for each of the above methods, `Rfactory` also supports the
+`<method>_pair` and `<method>_list` variants (e.g. `create_pair` and
+`create_list`).

@@ -17,11 +17,41 @@ describe 'Rfactory' do
         expect(current_path).to eq 'spec/factories.rb'
         expect(current_line).to eq 'factory :user do'
       end
+
+      it "supports the '#{method}_pair' factory method" do
+        create_factories_file
+        edit_spec_file_with_text "users = #{method}_pair(:user)"
+
+        vim.command 'Rfactory'
+
+        expect(current_line).to eq 'factory :user do'
+        expect(current_path).to eq 'spec/factories.rb'
+      end
+
+      it "supports the '#{method}_list' factory method" do
+        create_factories_file
+        edit_spec_file_with_text "users = #{method}_list(:user, 3)"
+
+        vim.command 'Rfactory'
+
+        expect(current_line).to eq 'factory :user do'
+        expect(current_path).to eq 'spec/factories.rb'
+      end
     end
 
     it 'navigates to traits if present' do
       create_factories_file
       edit_spec_file_with_text 'user = create(:user, :with_token)'
+
+      vim.command 'Rfactory'
+
+      expect(current_path).to eq 'spec/factories.rb'
+      expect(current_line).to eq 'trait :with_token do'
+    end
+
+    it 'finds traits in _list FG method calls' do
+      create_factories_file
+      edit_spec_file_with_text 'users = create_list(:user, 3, :with_token)'
 
       vim.command 'Rfactory'
 
