@@ -176,7 +176,7 @@ describe 'Rfactory' do
   end
 
   def current_line
-    line = vim.command "echo getline('.')"
+    vim.command "echo getline('.')"
   end
 
   def current_path
