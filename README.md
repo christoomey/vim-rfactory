@@ -10,6 +10,60 @@ definitions within Vim, inspired by the navigation commands in [Rails.vim][].
 [Rails.vim]: https://github.com/tpope/vim-rails
 [rfactory navigation demo]: ./images/rfactory-navigation-demo.gif
 
+Installation
+------------
+There are several plugin managers available to simplify installation of Rfactory and other vim plugins
+
+### [Vundle](https://github.com/VundleVim/Vundle.vim)
+Place this in your .vimrc:
+
+```
+Plugin 'christoomey/vim-rfactory'
+```
+
+then run the following in Vim:
+
+```
+:source %
+:PluginInstall
+```
+For Vundle version < 0.10.2, replace Plugin with Bundle above.
+
+### [NeoBundle](https://github.com/Shougo/neobundle.vim)
+place this in your .vimrc:
+
+```
+NeoBundle 'christoomey/vim-rfactory'
+```
+then run the following in Vim:
+
+```
+:source %
+:NeoBundleInstall
+```
+
+### [VimPlug](https://github.com/junegunn/vim-plug)
+Place this in your .vimrc:
+
+```
+Plug 'christoomey/vim-rfactory'
+```
+then run the following in Vim:
+
+```
+:source %
+:PlugInstall
+```
+
+### [Pathogen](https://github.com/tpope/vim-pathogen)
+Run the following in a terminal:
+
+```
+cd ~/.vim/bundle
+git clone https://github.com/christoomey/vim-rfactory
+```
+
+
 Usage
 -----
 
