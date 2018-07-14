@@ -8,7 +8,7 @@ describe 'Rfactory' do
 
   context ':Rfactory' do
     %w{create build build_stubbed attributes_for}.each do |method|
-      it "maps FG method '#{method}' to its factory" do
+      it "maps FactoryBot method '#{method}' to its factory" do
         create_factories_file
         edit_spec_file_with_text "user = #{method}(:user)"
 
@@ -49,7 +49,7 @@ describe 'Rfactory' do
       expect(current_line).to eq 'trait :with_token do'
     end
 
-    it 'finds traits in _list FG method calls' do
+    it 'finds traits in _list FactoryBot method calls' do
       create_factories_file
       edit_spec_file_with_text 'users = create_list(:user, 3, :with_token)'
 
@@ -204,7 +204,7 @@ describe 'Rfactory' do
   def create_factories_file(path: "spec/factories.rb", factories_text: nil)
     FileUtils.mkdir_p File.dirname(path)
     factories_text ||= normalize_string_indent <<-EOS
-      FactoryGirl.define do
+      FactoryBot.define do
         factory :user do
           name 'Bob smith'
 
