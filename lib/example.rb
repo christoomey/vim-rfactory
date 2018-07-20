@@ -11,6 +11,10 @@ class FactoryCallFinder
   def find(node)
     if found?(node)
       node
+    else
+      node.children.detect do |child_node|
+        find(child_node)
+      end
     end
   end
 
@@ -50,10 +54,15 @@ class MetaData
 end
 
 class Node
+  attr_accessor :children
+
   def initialize(node)
     @type = node[0]
+    binding.pry
     @meta_data = MetaData.new(node[1])
-    @children = node[2]
+    @children = node[2].map do |child_node|
+      Node.new(child_node)
+    end
     @raw_node = node
   end
 
@@ -83,7 +92,7 @@ class Node
 
   private
 
-  attr_accessor :type, :meta_data, :children
+  attr_accessor :type, :meta_data
 end
 
 should_match = [:method_add_arg,
@@ -104,10 +113,30 @@ tricky_should_not_match = [:method_add_arg,
      [:fcall, [:@ident, "expect", [8, 6]]],
      [:arg_paren, [:args_add_block, [[:vcall, [:@ident, "page", [8, 13]]]], false]]]
 
+nested_should_match = [:bodystmt,
+         [[:assign,
+           [:var_field, [:@ident, "user", [14, 6]]],
+           [:method_add_arg,
+            [:fcall, [:@ident, "create", [14, 13]]],
+            [:arg_paren,
+             [:args_add_block,
+              [[:symbol_literal, [:symbol, [:@ident, "subscriber", [14, 21]]]],
+               [:symbol_literal, [:symbol, [:@ident, "with_full_subscription", [14, 34]]]],
+               [:symbol_literal, [:symbol, [:@ident, "needs_onboarding", [14, 59]]]]],
+              false]]]],
+          [:command,
+           [:@ident, "sign_in_as", [15, 6]],
+           [:args_add_block, [[:var_ref, [:@ident, "user", [15, 17]]]], false]],
+          [:command,
+           [:@ident, "visit", [17, 6]],
+           [:args_add_block, [[:vcall, [:@ident, "root_path", [17, 12]]]], false]],
+          ]]
+
 [
   [:should_match, should_match, Node.new(should_match)],
   [:should_not_match, should_not_match, nil],
   [:tricky_should_not_match, tricky_should_not_match, nil],
+  [:nested_should_match, nested_should_match, Node.new(should_match)],
 ].each do |test_name, test_case, expected_result|
   if FactoryCallFinder.find(Node.new(test_case)) == expected_result # - node
     puts "#{test_name} passed!"
