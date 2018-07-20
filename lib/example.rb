@@ -9,7 +9,9 @@ class FactoryCallFinder
   end
 
   def find(node)
-    found?(node)
+    if found?(node)
+      node
+    end
   end
 
   private
@@ -52,6 +54,7 @@ class Node
     @type = node[0]
     @meta_data = MetaData.new(node[1])
     @children = node[2]
+    @raw_node = node
   end
 
   def of_type?(expected_type)
@@ -69,6 +72,14 @@ class Node
   def meta_data_with_content?(expected_content)
     meta_data.with_content?(expected_content)
   end
+
+  def ==(other_node)
+    raw_node == other_node.raw_node
+  end
+
+  protected
+
+  attr_accessor :raw_node
 
   private
 
@@ -94,9 +105,9 @@ tricky_should_not_match = [:method_add_arg,
      [:arg_paren, [:args_add_block, [[:vcall, [:@ident, "page", [8, 13]]]], false]]]
 
 [
-  [:should_match, should_match, true],
-  [:should_not_match, should_not_match, false],
-  [:tricky_should_not_match, tricky_should_not_match, false],
+  [:should_match, should_match, Node.new(should_match)],
+  [:should_not_match, should_not_match, nil],
+  [:tricky_should_not_match, tricky_should_not_match, nil],
 ].each do |test_name, test_case, expected_result|
   if FactoryCallFinder.find(Node.new(test_case)) == expected_result # - node
     puts "#{test_name} passed!"
