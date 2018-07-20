@@ -1,6 +1,6 @@
 require "ripper"
 
-_dunno, root = Ripper.sexp(File.read("good"))
+# _dunno, root = Ripper.sexp(File.read("sample.rb"))
 
 class FactoryCallFinder
   def self.find(root)
