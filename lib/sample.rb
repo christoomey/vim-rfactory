@@ -22,7 +22,7 @@ feature "User views landing page" do
 
   context "the user is logged in and does not needs onboarding" do
     it "displays the welcome page" do
-      user = create(:subscriber, :with_full_subscription, :onboarded)
+      user = create(:user, :with_full_subscription, :onboarded)
       sign_in_as user
 
       visit root_path
